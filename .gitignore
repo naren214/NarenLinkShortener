@@ -1,0 +1,7 @@
+node_modules/
+dist/
+urls.db
+urls.db-shm
+urls.db-wal
+.env
+.DS_Store
