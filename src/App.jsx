@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import Cubes from './components/Cubes.jsx';
 import GradientWaves from './components/GradientWaves.jsx';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+// Use the same origin in production (Render), while allowing Vite local development
+// to point at the separate Express server on port 4000.
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:4000' : '');
 
 function LinkIcon({ size = 18 }) {
   return <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>;
@@ -40,7 +42,7 @@ function App() {
       const response = await fetch(`${API_URL}/api/shorten`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not shorten that URL.');
-      const result = data.shortUrl || `${API_URL}/${data.shortCode}`;
+      const result = data.shortUrl || `${window.location.origin}/${data.shortCode}`;
       setShortUrl(result); setStatus('Link shortened successfully.'); setUrl('');
       const nextLinks = [{ shortUrl: result, originalUrl: url }, ...recentLinks.filter((link) => link.shortUrl !== result)].slice(0, 3);
       setRecentLinks(nextLinks); localStorage.setItem('linklite-recent', JSON.stringify(nextLinks));
