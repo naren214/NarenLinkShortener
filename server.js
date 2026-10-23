@@ -8,7 +8,7 @@ import sqlite3 from 'sqlite3';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const port = process.env.PORT || 4000;
-const db = new sqlite3.Database(path.join(__dirname, 'urls.db'));
+const db = new sqlite3.Database(process.env.DATABASE_PATH || path.join(__dirname, 'urls.db'));
 
 app.use(cors());
 app.use(express.json());
@@ -25,13 +25,20 @@ function createShortCode() {
   return crypto.randomBytes(4).toString('base64url').slice(0, 6);
 }
 
+function isWebUrl(value) {
+  try {
+    const parsed = new URL(value);
+    return ['http:', 'https:'].includes(parsed.protocol);
+  } catch {
+    return false;
+  }
+}
+
 app.post('/api/shorten', (req, res) => {
   const { url } = req.body;
 
-  try {
-    new URL(url);
-  } catch {
-    return res.status(400).json({ error: 'Please provide a valid URL.' });
+  if (!isWebUrl(url)) {
+    return res.status(400).json({ error: 'Please provide a valid HTTP or HTTPS URL.' });
   }
 
   const shortCode = createShortCode();
@@ -54,6 +61,7 @@ app.get('/:shortCode', (req, res, next) => {
     (error, row) => {
       if (error) return res.status(500).send('Database error.');
       if (!row) return res.status(404).send('Short URL not found.');
+      if (!isWebUrl(row.original_url)) return res.status(410).send('This short URL has an unsupported destination.');
       res.redirect(row.original_url);
     },
   );
