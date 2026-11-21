@@ -15,10 +15,9 @@
     "@vitejs/plugin-react": "^4.3.4",
     "cors": "latest",
     "express": "latest",
-    "vite": "^6.3.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "sqlite3": "^5.1.7"
-  },
-  "devDependencies": {}
+    "sqlite3": "^6.0.1",
+    "vite": "^6.3.5"
+  }
 }

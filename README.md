@@ -4,8 +4,10 @@ A minimal React + Express + SQLite URL shortener.
 
 ## Run locally
 
+Use Node.js 22 or later.
+
 ```bash
-npm install
+npm ci
 npm run build
 npm run server
 ```
@@ -14,7 +16,7 @@ Open http://localhost:4000.
 
 ## Render deployment
 
-- Build command: `npm install && npm run build`
+- Build command: `npm ci && npm run build`
 - Start command: `npm run server`
 - Service type: Web Service
 

@@ -42,7 +42,7 @@ function App() {
       const response = await fetch(`${API_URL}/api/shorten`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not shorten that URL.');
-      const result = data.shortUrl || `${window.location.origin}/${data.shortCode}`;
+      const result = new URL(`/${data.shortCode}`, response.url).href;
       setShortUrl(result); setStatus('Link shortened successfully.'); setUrl('');
       const nextLinks = [{ shortUrl: result, originalUrl: url }, ...recentLinks.filter((link) => link.shortUrl !== result)].slice(0, 3);
       setRecentLinks(nextLinks); localStorage.setItem('linklite-recent', JSON.stringify(nextLinks));
